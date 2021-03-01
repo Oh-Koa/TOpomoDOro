@@ -73,10 +73,10 @@ const submitNewList = (e) => {
 };
 
 const TaskLists = () => `
-  <section class="task-lists">
+  <aside class="task-lists">
     ${ListsContainer(lists)}
     ${NewListForm()}
-  </section>
+  </aside>
 `;
 
 const TaskListHeader = ({ name, tasks }) => `
@@ -97,10 +97,7 @@ const ListItems = ({ tasks }) => `
         completed ? ` checked` : ``
       }/>
       <label for="task-${i}"><span class="custom-checkbox"></span>${name}</label>
-      <div class="task-notes">
-        <p><strong>Notes:</strong></p>
-        <p>${notes}</p>
-      </div>
+      <p class="task-notes">${notes}</p>
     </li>
   `
     )
@@ -126,8 +123,8 @@ const TaskListItems = (list) => `
 
 const NewTaskForm = () => `
   <form action="" id="new-task-form">
-    <input type="text" class="new task" aria-label="new task name" placeholder="new task name" id="new-task-input"/>
-    <textarea name="task-note-input" id="task-note-input" style="resize: none;" cols="30" rows="10" aria-label="new task note" placeholder="new task note"></textarea>
+    <input type="text" class="new-task-input" aria-label="new task name" placeholder="new task name" id="new-task-input"/>
+    <textarea name="task-note-input" id="task-note-input" cols="30" rows="5" aria-label="new task note" placeholder="new task note"></textarea>
     <button class="btn create" aria-label="create-new-task">+</button>
   </form>
 `;
@@ -158,8 +155,9 @@ const submitNewTask = (e) => {
 
 const ListOptions = () => `
   <div class="list-options">
-    <button id="delete-completed-btn" type="button">delete completed tasks</button>
     <button id="delete-list-btn" type="button">delete list</button>
+    <button id="delete-completed-btn" type="button">delete completed tasks</button>
+    <button id="add-task-btn" type="button">add task</button>
   </div>
 `;
 const deleteCompleted = (e) => {
@@ -185,7 +183,7 @@ const deleteList = (e) => {
 };
 
 const TaskList = (list) => `
-  <section class="task-list">
+  <main class="task-list">
     ${
       !list
         ? `
@@ -199,10 +197,18 @@ const TaskList = (list) => `
       ${ListOptions()}
     `
     }
-  </section>
+  </main>
+`;
+
+const Header = () => `
+  <header>
+    <h1>1 Tomato, 2 Tomatoes</h1>
+    <div class="lists-toggle"><span class="toggle-lines"></span></div>
+  </header>
 `;
 
 const AppBody = () => `
+    ${Header()}
     ${TaskLists()}
     ${TaskList(selectedList())}
 `;
