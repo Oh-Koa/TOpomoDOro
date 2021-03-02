@@ -73,31 +73,34 @@ const submitNewList = (e) => {
 };
 
 const TaskLists = () => `
-  <aside class="task-lists">
+  <aside class="task-lists" id="task-lists">
     ${ListsContainer(lists)}
     ${NewListForm()}
   </aside>
 `;
 
-const TaskListHeader = ({ name, tasks }) => `
-  <div class="task-list-header">
-    <h2>${name}</h2>
-    <p>Tasks Remaining: <span id="task-count">${
-      tasks.filter((task) => !task.completed).length
-    }</span></p>
-  </div>
-`;
+const taskCounter = (tasks) => {
+  const taskCount = tasks.filter((task) => !task.completed).length;
+  return taskCount === 0 ? `none` : taskCount;
+};
+const TaskListHeader = ({ name, tasks }) => {
+  return `
+    <div class="task-list-header">
+      <h2>${name}</h2>
+      <p>Tasks Remaining: <span id="task-count">${taskCounter(tasks)}</span></p>
+    </div>
+  `;
+};
 
 const ListItems = ({ tasks }) => `
   <ul class="list-items">${tasks
     .map(
-      ({ name, id, completed, notes = `` }, i) => `
+      ({ name, id, completed }, i) => `
     <li class="task">
       <input type="checkbox" name="task-checkbox" class="task-name" id="task-${i}" data-task-id="${id}"${
         completed ? ` checked` : ``
       }/>
       <label for="task-${i}"><span class="custom-checkbox"></span>${name}</label>
-      <p class="task-notes">${notes}</p>
     </li>
   `
     )
@@ -111,9 +114,10 @@ const toggleTaskCheckbox = (e) => {
   );
   selectedTask.completed = !selectedTask.completed;
   saveLists();
-  const taskCount = () =>
-    selectedList().tasks.filter((task) => !task.completed).length;
-  render(taskCount(), document.getElementById(`task-count`));
+  render(
+    taskCounter(selectedList().tasks),
+    document.getElementById(`task-count`)
+  );
 };
 
 const TaskListItems = (list) => `
@@ -124,14 +128,12 @@ const TaskListItems = (list) => `
 const NewTaskForm = () => `
   <form action="" id="new-task-form">
     <input type="text" class="new-task-input" aria-label="new task name" placeholder="new task name" id="new-task-input"/>
-    <textarea name="task-note-input" id="task-note-input" cols="30" rows="5" aria-label="new task note" placeholder="new task note"></textarea>
     <button class="btn create" aria-label="create-new-task">+</button>
   </form>
 `;
-const createTask = (name, notes) => ({
+const createTask = (name) => ({
   id: Date.now().toString(16),
   name: name,
-  notes: notes,
   completed: false,
 });
 const submitNewTask = (e) => {
@@ -139,11 +141,8 @@ const submitNewTask = (e) => {
 
   e.preventDefault();
   const taskName = document.getElementById(`new-task-input`).value;
-  const taskNote = document.getElementById(`task-note-input`).value;
   if (taskName.trim().length !== 0) {
-    selectedList().tasks = selectedList().tasks.concat(
-      createTask(taskName, taskNote)
-    );
+    selectedList().tasks = selectedList().tasks.concat(createTask(taskName));
     saveLists();
     render(
       TaskListItems(selectedList()),
@@ -157,7 +156,6 @@ const ListOptions = () => `
   <div class="list-options">
     <button id="delete-list-btn" type="button">delete list</button>
     <button id="delete-completed-btn" type="button">delete completed tasks</button>
-    <button id="add-task-btn" type="button">add task</button>
   </div>
 `;
 const deleteCompleted = (e) => {
@@ -187,7 +185,7 @@ const TaskList = (list) => `
     ${
       !list
         ? `
-    <p class="no-list-selected">no list selected</p>
+    <h1 class="no-list-selected">no list selected</h1>
     `
         : `
       <div class="task-list-items-container" id="task-list-items-container">
@@ -202,10 +200,15 @@ const TaskList = (list) => `
 
 const Header = () => `
   <header>
-    <h1>1 Tomato, 2 Tomatoes</h1>
-    <div class="lists-toggle"><span class="toggle-lines"></span></div>
+    <h1>Todo App</h1>
+    <div class="lists-toggle" id="lists-toggle" data-menu-active="false"><span class="toggle-lines"></span></div>
   </header>
 `;
+const toggleListsMenu = (e) => {
+  if (!e.target.closest(`#lists-toggle`)) return;
+
+  document.getElementById(`task-lists`).classList.toggle(`active`);
+};
 
 const AppBody = () => `
     ${Header()}
@@ -218,6 +221,7 @@ root.addEventListener(`click`, (e) => {
   deleteList(e);
   toggleTaskCheckbox(e);
   deleteCompleted(e);
+  toggleListsMenu(e);
 });
 root.addEventListener(`submit`, (e) => {
   submitNewList(e);
