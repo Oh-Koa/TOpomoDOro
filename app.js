@@ -2,8 +2,17 @@ const root = document.getElementById(`app`);
 
 const LOCAL_STORAGE_LIST_KEY = `tpdrTasks.list`;
 const LOCAL_STORAGE_SELECTED_LIST_ID_KEY = `tpdrTasks.selectedListId`;
-let lists = JSON.parse(localStorage.getItem(LOCAL_STORAGE_LIST_KEY)) || [];
-let selectedListId = localStorage.getItem(LOCAL_STORAGE_SELECTED_LIST_ID_KEY);
+let lists = JSON.parse(localStorage.getItem(LOCAL_STORAGE_LIST_KEY)) || [
+  {
+    id: Date.now().toString(16),
+    name: `List 1`,
+    tasks: [],
+  },
+];
+
+let selectedListId =
+  localStorage.getItem(LOCAL_STORAGE_SELECTED_LIST_ID_KEY) ||
+  Date.now().toString(16);
 const selectedList = () => lists.find((list) => list.id === selectedListId);
 
 const saveLists = () =>
@@ -36,7 +45,7 @@ const selectList = (e) => {
 
   selectedListId = e.target.dataset.listId;
   saveSelectedListId();
-  render(AppBody());
+  render(AppBody(), document.getElementsByTagName(`main`)[0]);
 };
 
 const ListsContainer = (listsArray) => `
@@ -67,16 +76,19 @@ const submitNewList = (e) => {
     selectedListId = newList.id;
     saveLists();
     saveSelectedListId();
-    render(AppBody());
+    render(AppBody(), document.getElementsByTagName(`main`)[0]);
     e.target.reset();
   }
 };
 
 const TaskLists = () => `
-  <aside class="task-lists" id="task-lists">
-    ${ListsContainer(lists)}
-    ${NewListForm()}
-  </aside>
+  <section class="task-lists" id="task-lists">
+    <h2>Lists</h2>
+    <div>
+      ${ListsContainer(lists)}
+      ${NewListForm()}
+    </div>
+  </section>
 `;
 
 const taskCounter = (tasks) => {
@@ -177,11 +189,11 @@ const deleteList = (e) => {
   selectedListId = null;
   saveLists();
   saveSelectedListId();
-  render(AppBody());
+  render(AppBody(), document.getElementsByTagName(`main`)[0]);
 };
 
 const TaskList = (list) => `
-  <main class="task-list">
+  <section class="task-list">
     ${
       !list
         ? `
@@ -195,7 +207,7 @@ const TaskList = (list) => `
       ${ListOptions()}
     `
     }
-  </main>
+  </section>
 `;
 
 const Header = () => `
@@ -211,9 +223,15 @@ const toggleListsMenu = (e) => {
 };
 
 const AppBody = () => `
-    ${Header()}
-    ${TaskLists()}
-    ${TaskList(selectedList())}
+  ${TaskLists()}
+  ${TaskList(selectedList())}
+`;
+
+const FullApp = () => `
+  ${Header()}
+  <main>
+    ${AppBody()}
+  </main>
 `;
 
 root.addEventListener(`click`, (e) => {
@@ -228,4 +246,4 @@ root.addEventListener(`submit`, (e) => {
   submitNewTask(e);
 });
 
-render(AppBody());
+render(FullApp());

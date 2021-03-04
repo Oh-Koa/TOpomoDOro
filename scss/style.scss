@@ -1,0 +1,308 @@
+@import './normalize';
+
+$headerBgColor: #000;
+$headerTxtColor: #fff;
+$boxShadowColor: #000;
+$bodyBgColor: #333;
+$taskListBgColor: #a5b;
+$taskBtmBorderColor: #bbb;
+$checkBoxColor: #fc0;
+$addTaskBtnColor: #bbb;
+$listsMenuBgColor: #222;
+$listsMenuTxtColor: #fff;
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100%;
+  height: 100vh;
+  overflow-y: hidden;
+  font-family: sans-serif;
+}
+
+#app {
+  height: 100%;
+  color: #fff;
+  background-color: $bodyBgColor;
+}
+
+input::placeholder {
+  text-transform: capitalize;
+}
+
+header {
+  color: $headerTxtColor;
+  background-color: $headerBgColor;
+  padding: 1em 0;
+  font-size: .75rem;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  box-shadow: 0 0 8px $boxShadowColor;
+  z-index: 20;
+  position: relative;
+  > h1 {
+    margin: 0;
+  }
+}
+
+.lists-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.5em;
+  margin: auto 1em auto 1em;
+}
+
+.toggle-lines {
+  width: 2em;
+  height: .25em;
+  border-radius: 1em;
+  background-color: #fff;
+  display: block;
+  position: relative;
+  &::before {
+    @extend .toggle-lines;
+    content: '';
+    position: absolute;
+    top: -.5em;
+  }
+  &::after {
+    @extend .toggle-lines;
+    content: '';
+    position: absolute;
+    top: .5em;
+  }
+}
+
+main {
+  height: calc(100% - 51.5px);
+}
+
+.task-list {
+  height: 100%;
+  padding: 1em;
+  z-index: -1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.task-list-items-container {
+  padding-bottom: 1em;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.task-list-header {
+  padding: 0 1em;
+  text-transform: capitalize;
+}
+
+.list-items {
+  color: #fff;
+  background-color: $taskListBgColor;
+  border-radius: .5em;
+  box-shadow: 0 6px 5px -3.5px $boxShadowColor;
+  list-style: none;
+  width: 100%;
+  height: 100%;
+  margin-top: .5em;
+  padding: 0 1em;
+  overflow-y: auto;
+}
+
+.task {
+  padding: 1em 0;
+  border-bottom: 1px solid $taskBtmBorderColor;
+  display: flex;
+  align-items: center;
+  > input {
+    position: absolute;
+    visibility: hidden;
+    &:checked {
+      + label {
+        > .custom-checkbox {
+          border: solid 1px $checkBoxColor;
+          &::before {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            width: 16px;
+            height: 16px;
+            background-color: $checkBoxColor;
+            border-radius: .7em;
+          }
+        }
+      }
+    }
+  }
+  > label {
+    font-weight: 600;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+  }
+  > p {
+    padding: .5em;
+  }
+}
+
+.custom-checkbox {
+  font-size: 1rem;
+  display: inline-table;
+  width: 20px;
+  height: 20px;
+  border-radius: 1em;
+  background-color: $taskListBgColor;
+  position: relative;
+  margin-right: .5em;
+  border: solid 1px #222;
+  &:focus {
+    border: solid 3px #222;
+  }
+}
+
+.list-options {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: .5em;
+  > button {
+    text-transform: capitalize;
+    border-radius: .5em;
+    box-shadow: 0 6px 5px -3.5px $boxShadowColor;
+    background-color: #000;
+    color: #fff;
+    border: 2px outset #555;
+    height: 70%;
+    width: 50%;
+    margin: .5em 0;
+  }
+}
+
+.no-list-selected {
+  margin: auto;
+  text-transform: capitalize;
+}
+
+#new-task-form {
+  // margin: 0 auto 1em;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  > input {
+    border-radius: .5em;
+    height: 2.5em;
+    margin-right: .5em;;
+    width: 80%;
+  }
+  > button {
+    font-size: 1.5rem;
+    width: 1.5em;
+    height: 1.5em;
+    box-shadow: 0 6px 5px -3.5px $boxShadowColor;
+    border-radius: .5em;
+    background-color: $addTaskBtnColor;
+    color: #fff;
+    border: 2px outset $addTaskBtnColor;
+  }
+}
+
+.task-lists {
+  max-height: 0;
+  overflow-y: hidden;
+  z-index: 10;
+  &.active {
+    max-height: 200%;
+    width: 100%; 
+    height: 100%;
+    position: absolute;
+    top: 51.5px;
+    background-color: $listsMenuBgColor;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: $listsMenuTxtColor;
+    padding: 1em 1em 5.5em;
+  }
+  > div {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+#new-list-form {
+  @extend #new-task-form;
+}
+
+.lists-container {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 1.2rem;
+  height: 83%;
+  overflow: auto;
+}
+
+.list-name {
+  padding: 1em 0;
+  border-bottom: 2px solid $taskBtmBorderColor;
+  text-transform: capitalize;
+  font-weight: 600;
+  &::before {
+    content: '';
+    width: 1em;
+    display: inline-block;
+  }
+  &.active-list::before {
+    content: '⏵';
+    width: 1em;
+    display: inline-block;
+  }
+}
+
+@media (min-width: 768px) {
+  .lists-toggle {
+    visibility: hidden;
+  }
+  main {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+  .task-lists {
+    position: relative;
+    max-height: 1000%;
+    height: 60%;
+    > h2 {
+      margin: 0 1em .5em;
+    }
+    > div {
+      height: 90%;
+    }
+  }
+  .lists-container {
+    background-color: $taskListBgColor;
+    border-radius: .5em;
+    box-shadow: 0 6px 5px -3.5px #000;
+    padding: .5em;
+    height: 75%;
+  }
+  #new-list-form {
+    padding-top: 1em;
+  }  
+  .task-list {
+    z-index: 0;
+    width: 50%;
+  }
+}
